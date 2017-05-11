@@ -1,7 +1,14 @@
 #include <queue>
+#include <array>
+#include <string>
 #include "Escalonador.hpp"
 
-using std::priority_queue
+using std::priority_queue;
+using std::array;
+using std::string;
+
+#define JOB_TO_BE_DETERMINED 0
+#define MACHINE_WITHOUT_GPU -1
 
 Scheduler::Scheduler(Communicator* comunicator): comunicator(comunicator)
 {
@@ -22,9 +29,7 @@ class CompareJobsByDuration
 
 void Scheduler::AddJobs(vector<JobInfo> *newJobs)
 {
-	vector<JobInfo*> jobsWithUnsuedCPU;
-	vector<JobInfo*> jobsWithUnsuedGPU;
-	priority_queue<JobInfo*> jobsWithNoDependencies(CompareJobsByDuration);
+	vector<shared_ptr< JobInfo> > jobsWithNoDependencies();
 	
 	int limitCounter= newJobs->size();
 	for(int count =0; count < limitCounter; count++)
@@ -40,45 +45,16 @@ void Scheduler::AddJobs(vector<JobInfo> *newJobs)
 			int numJobsWithDep= job.idOfJobsWhomIDepend.size();
 			for(int count=0; count < numJobsWithDep; count++)
 			{
-				uint64_t dependecyJobID= job.idOfJobsWhomIDepend[count];
-				bloquedJobs[dependecyJob].emplace(bloquedJobs[dependecyJob].end(), job);
+				int64_t dependecyJobID= job.idOfJobsWhomIDepend[count];
+				bloquedJobs[dependecyJob].emplace_back(&job);
 			}
 		}
-		if(!job.UseCPU())
-		{
-			jobsWithUnsuedCPU.push_back(&job);
-		}
-		if(!job.UseGPU())//otimização: usar else if no lugar de if
-		{
-			jobsWithUnsuedGPU.push_back(&job);
-		}
 	}
 	
-	priority_queue<JobInfo*> cpuJobsWoutDep(CompareJobsByDuration);
-	priority_queue<JobInfo*> gpuJobsWoutDep(CompareJobsByDuration);
-	
-	limitCounter= jobsWithNoDependencies.size();
-	for(int count =0; count < limitCounter; count++)
-	{
-		JobInfo& job= *(jobsWithNoDependencies[count]);
-		if(job.UseCPU())
-		{
-			cpuJobsWoutDep.push_back(&job);
-		}
-		if(job.UseGPU())
-		{
-			gpuJobsWoutDep.push_back(&job);
-		}
-	}
-	
-	int counter=0;
-	limitCounter= jobsWithUnsuedCPU.size();
-	for(int  count=0; count < limitCounter)
-	{
-		
-	}
+	ScheduleJobs(jobsWithNoDependencies);
 }
-void Scheduler::JobEnded(uint64_t jobID)
+
+void Scheduler::JobEnded(int64_t jobID)
 {
 	if(bloquedJobs.end() == bloquedJobs.find (jobID))
 	vector<shared_ptr<JobInfo> > unblockedJobs;
@@ -96,6 +72,65 @@ void Scheduler::JobEnded(uint64_t jobID)
 			it++;
 		}
 	}
-	//Escalonar unblockedJobs
+	ScheduleJobs(unblockedJobs);
+}
+
+void Scheduler::ScheduleJobs(vector<shared_ptr<JobInfo> > const &jobsToSchedule)
+{
+	int numberOfMachines= 0;
+	priority_queue<JobInfo*> cpuJobsWoutDep(CompareJobsByDuration);
+	priority_queue<JobInfo*> gpuJobsWoutDep(CompareJobsByDuration);
+// isso pode ser rodado em paralelo com...
+	for(int count =0 ; count < jobsToSchedule.size(); count++)
+	{
+		JobInfo &job= jobsToSchedule[count];
+		numberOfMachines+= job.MachinesToInstantiate.numberOfMachines;
+		if(job.UseCPU())
+		{
+			cpuJobsWoutDep.push(&job);
+		}
+		if(job.UseGPU())
+		{
+			gpuJobsWoutDep.push(&job);
+		}
+	}
+	array<std::string, numberOfMachines> machines;
+	array<int64_t, numberOfMachines> CPUJobID;
+	array<int64_t, numberOfMachines> GPUJobID;
+// ...isso
+	for(int count =0, int machineCounter=0 ; count < jobsToSchedule.size(); count++)
+	{
+		JobInfo &job= jobsToSchedule[count];
+		for(int count=0; count < job.MachinesToInstantiate.numberOfMachines; count++)
+		{
+			machines[machineCounter]= string(job.MachinesToInstantiate[count].machineName);
+			CPUJobID[machineCounter]= (job.UseCPU() )? job.id : JOB_TO_BE_DETERMINED;
+			CPUJobID[machineCounter]= (job.MachinesToInstantiate[count].machineType.HaveGPU())?
+										(job.UseGPU() )?
+												job.id
+												: JOB_TO_BE_DETERMINED
+										: MACHINE_WITHOUT_GPU;
+			machineCounter++;
+		}
+	}
+	//ja temos a tabela de máquina x CPU/GPU preenchida com as informações fornecidas ao escalonador,
+	//agora vamos fazer o escalonador escolher jobs pára usarem unidades de processamento não escalonadas.
+	int lastHelpedJob=0;
+	for(int count= 0; count < machines.size(); count++)
+	{
+		if(JOB_TO_BE_DETERMINED == CPUJobID[count])
+		{
+			CPUJobID[count] = cpuJobsWoutDep[lastHelpedJob++];
+		}
+	}
+	lastHelpedJob=0;
+	for(int count= 0; count < machines.size(); count++)
+	{
+		if(JOB_TO_BE_DETERMINED == GPUJobID[count])
+		{
+			GPUJobID[count] = gpuJobsWoutDep[lastHelpedJob++];
+		}
+	}
+	//aqui usar o comunicador para enviar esse reultado para o programa JAVA
 }
 

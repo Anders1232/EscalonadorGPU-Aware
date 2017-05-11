@@ -16,11 +16,17 @@ using std::unique_ptr;
 #define JOB_WILL_USE_CPU (0x4)//informa que o Job não pode ser executado em CPU
 #define JOB_WILL_USE_GPU (0x5)//informa que o Job não pode ser executado em GPU
 
+//\todo criar flag DO_NOT_SCHEDULE para jobs que não podem rodar em mais de um job
+
 struct MachineType
 {
 	char * machineName;
 	int64_t CPUPerfPoints;
 	int64_t GPUPerfPoint;//zero ou negativo significa não roda em GPU
+	inline bool HaveGPU(void)
+	{
+		return (GPUPerfPoint>0);
+	}
 };
 
 struct MachinesList
@@ -47,10 +53,9 @@ struct MachinesList::Element
 
 struct JobInfo
 {
-	uint64_t id;
-	vector<uint64_t> idOfJobsWhomIDepend;
+	int64_t id;
+	vector<int64_t> idOfJobsWhomIDepend;
 	unsigned int flags;
-	unsigned int requestedNumberOfNodes;
 	MachineList MachinesToInstantiate;
 	double execTime;//execTime é uma matriz triangular superior esquerda 4x4. No qual a dimensâo de maior grau refete-se ao número de GPUs(0, N/4, N/2, N). A dimensão de maior grau refere-se ao número de CPUs(0, N/4, N/2, N).
 	inline bool UseCPU(void) const
@@ -69,9 +74,10 @@ class Scheduler
 	public:
 		Scheduler(Communicator* comunicator);
 		void AddJobs(vector<JobInfo> *newJobs);
-		void JobEnded(uint64_t jobID);
+		void JobEnded(int64_t jobID);
 	private:
-		unordered_map<uint64_t/*id*/, vector<shared_ptr<JobInfo> > > bloquedJobs;
+		void ScheduleJobs(vector<shared_ptr<JobInfo> > &jobsToSchedule);
+		unordered_map<int64_t/*id*/, vector<shared_ptr<JobInfo> > > bloquedJobs;
 		unique_ptr<Communicator> comunicator;
 };
 
