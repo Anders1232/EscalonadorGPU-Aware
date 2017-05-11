@@ -27,3 +27,7 @@
 *.exe
 *.out
 *.app
+
+#gerados durante a compilação
+dep/
+bin/

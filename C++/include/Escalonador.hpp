@@ -38,25 +38,25 @@ struct MachinesList
 	private:
 		vector<MachineType> machinesToInstantiate;
 		vector<int> numMachinesToInstantiatePerMachineType;
-		vector<int> flags
+//		vector<int> flags;
 };
 
 struct MachinesList::Element
 {
 	public:
-		MachinesList::Element(int, bool willUseCPu, bool willUseGPU, MachineType);
+		Element(int, bool willUseCPu, bool willUseGPU, MachineType);
 		int numberOfMachines;
 		MachineType machineType;
 	private:
 //		int flags;
-}
+};
 
 struct JobInfo
 {
 	int64_t id;
 	vector<int64_t> idOfJobsWhomIDepend;
 	unsigned int flags;
-	MachineList MachinesToInstantiate;
+	MachinesList MachinesToInstantiate;
 	double execTime;//execTime é uma matriz triangular superior esquerda 4x4. No qual a dimensâo de maior grau refete-se ao número de GPUs(0, N/4, N/2, N). A dimensão de maior grau refere-se ao número de CPUs(0, N/4, N/2, N).
 	inline bool UseCPU(void) const
 	{
@@ -72,13 +72,13 @@ struct JobInfo
 class Scheduler
 {
 	public:
-		Scheduler(Communicator* comunicator);
+//		Scheduler(Communicator* comunicator);
 		void AddJobs(vector<JobInfo> *newJobs);
 		void JobEnded(int64_t jobID);
 	private:
-		void ScheduleJobs(vector<shared_ptr<JobInfo> > &jobsToSchedule);
+		void ScheduleJobs(vector<shared_ptr< JobInfo > > const &jobsToSchedule);
 		unordered_map<int64_t/*id*/, vector<shared_ptr<JobInfo> > > bloquedJobs;
-		unique_ptr<Communicator> comunicator;
+//		unique_ptr<Communicator> comunicator;
 };
 
 #endif

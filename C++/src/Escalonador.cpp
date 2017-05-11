@@ -1,6 +1,7 @@
 #include <queue>
 #include <array>
 #include <string>
+#include <algorithm>
 #include "Escalonador.hpp"
 
 using std::priority_queue;
@@ -9,10 +10,11 @@ using std::string;
 
 #define JOB_TO_BE_DETERMINED 0
 #define MACHINE_WITHOUT_GPU -1
-
+/*
 Scheduler::Scheduler(Communicator* comunicator): comunicator(comunicator)
 {
 }
+*/
 
 class CompareJobsByDuration
 {
@@ -25,11 +27,11 @@ class CompareJobsByDuration
 		{
 			return a->execTime < b->execTime;
 		}
-}
+};
 
 void Scheduler::AddJobs(vector<JobInfo> *newJobs)
 {
-	vector<shared_ptr< JobInfo> > jobsWithNoDependencies();
+	vector<shared_ptr< JobInfo> > jobsWithNoDependencies;
 	
 	int limitCounter= newJobs->size();
 	for(int count =0; count < limitCounter; count++)
@@ -37,16 +39,16 @@ void Scheduler::AddJobs(vector<JobInfo> *newJobs)
 		JobInfo& job= (*newJobs)[count];
 		if(job.idOfJobsWhomIDepend.empty())
 		{
-			jobsWithNoDependencies.push_back(&job);
+			jobsWithNoDependencies.emplace_back(&job);
 		}
 		else
 		{
-//			shared_ptr<JobInfo> jobWithDependencies(job);
+			shared_ptr<JobInfo> jobWithDependencies(&job);
 			int numJobsWithDep= job.idOfJobsWhomIDepend.size();
 			for(int count=0; count < numJobsWithDep; count++)
 			{
 				int64_t dependecyJobID= job.idOfJobsWhomIDepend[count];
-				bloquedJobs[dependecyJob].emplace_back(&job);
+				bloquedJobs[dependecyJobID].emplace_back(jobWithDependencies);
 			}
 		}
 	}
@@ -57,14 +59,17 @@ void Scheduler::AddJobs(vector<JobInfo> *newJobs)
 void Scheduler::JobEnded(int64_t jobID)
 {
 	if(bloquedJobs.end() == bloquedJobs.find (jobID))
-	vector<shared_ptr<JobInfo> > unblockedJobs;
-//	int limitCounter= bloquedJobs[jobID].size();
-//	for(int count =0; count < limitCounter; count++)
-	for(vector<shared_ptr<jobInfo>>::iterator it= bloquedJobs.begin; it != bloquedJobs.end(); )
 	{
-		if((bloquedJobs[jobID][counter].unique())
+		return;
+	}
+	vector<shared_ptr<JobInfo> > unblockedJobs= bloquedJobs[jobID];
+//	int limitCounter= unblockedJobs.size();
+//	for(int count =0; count < limitCounter; count++)
+	for(vector<shared_ptr<JobInfo>>::iterator it = unblockedJobs.begin(); it != unblockedJobs.end(); )
+	{
+		if( (*it).unique())
 		{
-			unblockedJobs.emplace(unblockedJobs.end(), bloquedJobs[jobID][counter]);
+			unblockedJobs.emplace_back(it);
 			it= unblockedJobs.erase(it);
 		}
 		else
@@ -75,23 +80,26 @@ void Scheduler::JobEnded(int64_t jobID)
 	ScheduleJobs(unblockedJobs);
 }
 
-void Scheduler::ScheduleJobs(vector<shared_ptr<JobInfo> > const &jobsToSchedule)
+void Scheduler::ScheduleJobs(vector<shared_ptr< JobInfo > > const &jobsToSchedule)
 {
 	int numberOfMachines= 0;
-	priority_queue<JobInfo*> cpuJobsWoutDep(CompareJobsByDuration);
-	priority_queue<JobInfo*> gpuJobsWoutDep(CompareJobsByDuration);
+	vector<JobInfo*> cpuJobsWoutDep;
+	vector<JobInfo*> gpuJobsWoutDep;
 // isso pode ser rodado em paralelo com...
 	for(int count =0 ; count < jobsToSchedule.size(); count++)
 	{
-		JobInfo &job= jobsToSchedule[count];
-		numberOfMachines+= job.MachinesToInstantiate.numberOfMachines;
+		JobInfo &job= (*(jobsToSchedule[count]) );
+		for(int count2= 0; count2< job.MachinesToInstantiate.GetListSize(); count++)
+		{
+			numberOfMachines+= job.MachinesToInstantiate[count2].numberOfMachines;
+		}
 		if(job.UseCPU())
 		{
-			cpuJobsWoutDep.push(&job);
+			cpuJobsWoutDep.push_back(&job);
 		}
 		if(job.UseGPU())
 		{
-			gpuJobsWoutDep.push(&job);
+			gpuJobsWoutDep.push_back(&job);
 		}
 	}
 	array<std::string, numberOfMachines> machines;
@@ -115,12 +123,16 @@ void Scheduler::ScheduleJobs(vector<shared_ptr<JobInfo> > const &jobsToSchedule)
 	}
 	//ja temos a tabela de máquina x CPU/GPU preenchida com as informações fornecidas ao escalonador,
 	//agora vamos fazer o escalonador escolher jobs pára usarem unidades de processamento não escalonadas.
+	CompareJobsByDuration comparer;
+	std::sort(cpuJobsWoutDep.begin(), cpuJobsWoutDep.end(), comparer);
+	std::sort(gpuJobsWoutDep.begin(), gpuJobsWoutDep.end(), comparer);
 	int lastHelpedJob=0;
 	for(int count= 0; count < machines.size(); count++)
 	{
 		if(JOB_TO_BE_DETERMINED == CPUJobID[count])
 		{
-			CPUJobID[count] = cpuJobsWoutDep[lastHelpedJob++];
+			CPUJobID[count] = cpuJobsWoutDep[lastHelpedJob%cpuJobsWoutDep.size()];
+			lastHelpedJob++;
 		}
 	}
 	lastHelpedJob=0;
@@ -128,7 +140,8 @@ void Scheduler::ScheduleJobs(vector<shared_ptr<JobInfo> > const &jobsToSchedule)
 	{
 		if(JOB_TO_BE_DETERMINED == GPUJobID[count])
 		{
-			GPUJobID[count] = gpuJobsWoutDep[lastHelpedJob++];
+			GPUJobID[count] = gpuJobsWoutDep[lastHelpedJob%gpuJobsWoutDep.size()];
+			lastHelpedJob++;
 		}
 	}
 	//aqui usar o comunicador para enviar esse reultado para o programa JAVA
