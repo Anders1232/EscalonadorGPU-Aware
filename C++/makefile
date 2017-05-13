@@ -2,7 +2,7 @@
 #Assume-se uma distribuição Linux como sistema operacional padrão
 #-------------------------------------------------------------
 
-COMPILER = clang++
+COMPILER = g++
 #comando para remover pastas
 RMDIR = rm -rf
 #comando para remover arquivos
@@ -11,8 +11,8 @@ RM = rm -f
 #Flags para geração automática de dependências
 DEP_FLAGS = -MT $@ -MMD -MP -MF $(DEP_PATH)/$.d
 LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm
-#FLAGS= -std=c++11 -Wall -pedantic -Wextra -fmax-errors=5 -fdiagnostics-color
-FLAGS= -std=c++11 -Wall -pedantic -Wextra -fmax-errors=5
+FLAGS= -std=c++11 -Wall -pedantic -Wextra -fmax-errors=5 -fdiagnostics-color
+#FLAGS= -std=c++11 -Wall -pedantic -Wextra -fmax-errors=5
 
 INC_PATH = -Iinclude
 SRC_PATH = src

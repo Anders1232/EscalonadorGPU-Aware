@@ -86,10 +86,10 @@ void Scheduler::ScheduleJobs(vector<shared_ptr< JobInfo > > const &jobsToSchedul
 	vector<JobInfo*> cpuJobsWoutDep;
 	vector<JobInfo*> gpuJobsWoutDep;
 // isso pode ser rodado em paralelo com...
-	for(int count =0 ; count < jobsToSchedule.size(); count++)
+	for(size_t count =0 ; count < jobsToSchedule.size(); count++)
 	{
 		JobInfo &job= (*(jobsToSchedule[count]) );
-		for(int count2= 0; count2< job.MachinesToInstantiate.GetListSize(); count++)
+		for(size_t count2= 0; count2< job.MachinesToInstantiate.GetListSize(); count++)
 		{
 			numberOfMachines+= job.MachinesToInstantiate[count2].numberOfMachines;
 		}
@@ -102,23 +102,31 @@ void Scheduler::ScheduleJobs(vector<shared_ptr< JobInfo > > const &jobsToSchedul
 			gpuJobsWoutDep.push_back(&job);
 		}
 	}
-	array<std::string, numberOfMachines> machines;
-	array<int64_t, numberOfMachines> CPUJobID;
-	array<int64_t, numberOfMachines> GPUJobID;
+//	array<std::string, numberOfMachines> machines;
+//	array<int64_t, numberOfMachines> CPUJobID;
+//	array<int64_t, numberOfMachines> GPUJobID;
+	std::string *machines;
+	machines= new std::string[numberOfMachines];
+//	std::string machines[numberOfMachines];
+	int64_t CPUJobID[numberOfMachines];
+	int64_t GPUJobID[numberOfMachines];
 // ...isso
-	for(int count =0, int machineCounter=0 ; count < jobsToSchedule.size(); count++)
 	{
-		JobInfo &job= jobsToSchedule[count];
-		for(int count=0; count < job.MachinesToInstantiate.numberOfMachines; count++)
+		int machineCounter= 0;
+		for(size_t count =0; count < jobsToSchedule.size(); count++)
 		{
-			machines[machineCounter]= string(job.MachinesToInstantiate[count].machineName);
-			CPUJobID[machineCounter]= (job.UseCPU() )? job.id : JOB_TO_BE_DETERMINED;
-			CPUJobID[machineCounter]= (job.MachinesToInstantiate[count].machineType.HaveGPU())?
-										(job.UseGPU() )?
-												job.id
-												: JOB_TO_BE_DETERMINED
-										: MACHINE_WITHOUT_GPU;
-			machineCounter++;
+			JobInfo &job= *jobsToSchedule[count];
+			for(size_t count=0; count < job.MachinesToInstantiate.GetListSize(); count++)
+			{
+				machines[machineCounter]= string(job.MachinesToInstantiate[count].machineType.machineName);
+				CPUJobID[machineCounter]= (job.UseCPU() )? job.id : JOB_TO_BE_DETERMINED;
+				CPUJobID[machineCounter]= (job.MachinesToInstantiate[count].machineType.HaveGPU())?
+											(job.UseGPU() )?
+													job.id
+													: JOB_TO_BE_DETERMINED
+											: MACHINE_WITHOUT_GPU;
+				machineCounter++;
+			}
 		}
 	}
 	//ja temos a tabela de máquina x CPU/GPU preenchida com as informações fornecidas ao escalonador,
@@ -127,23 +135,25 @@ void Scheduler::ScheduleJobs(vector<shared_ptr< JobInfo > > const &jobsToSchedul
 	std::sort(cpuJobsWoutDep.begin(), cpuJobsWoutDep.end(), comparer);
 	std::sort(gpuJobsWoutDep.begin(), gpuJobsWoutDep.end(), comparer);
 	int lastHelpedJob=0;
-	for(int count= 0; count < machines.size(); count++)
+	for(int count= 0; count < numberOfMachines; count++)
 	{
 		if(JOB_TO_BE_DETERMINED == CPUJobID[count])
 		{
-			CPUJobID[count] = cpuJobsWoutDep[lastHelpedJob%cpuJobsWoutDep.size()];
+			CPUJobID[count] = cpuJobsWoutDep[lastHelpedJob%cpuJobsWoutDep.size()]->id;
 			lastHelpedJob++;
 		}
 	}
 	lastHelpedJob=0;
-	for(int count= 0; count < machines.size(); count++)
+	for(int count= 0; count < numberOfMachines; count++)
 	{
 		if(JOB_TO_BE_DETERMINED == GPUJobID[count])
 		{
-			GPUJobID[count] = gpuJobsWoutDep[lastHelpedJob%gpuJobsWoutDep.size()];
+			GPUJobID[count] = gpuJobsWoutDep[lastHelpedJob%gpuJobsWoutDep.size()]->id;
 			lastHelpedJob++;
 		}
 	}
 	//aqui usar o comunicador para enviar esse reultado para o programa JAVA
+
+	delete [] machines;
 }
 
