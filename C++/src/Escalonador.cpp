@@ -32,6 +32,7 @@ class CompareJobsByDuration
 void Scheduler::AddJobs(vector<JobInfo> *newJobs)
 {
 	vector<shared_ptr< JobInfo> > jobsWithNoDependencies;
+//	vector< JobInfo* > jobsWithNoDependencies;
 	
 	int limitCounter= newJobs->size();
 	for(int count =0; count < limitCounter; count++)
@@ -62,20 +63,22 @@ void Scheduler::JobEnded(int64_t jobID)
 	{
 		return;
 	}
-	vector<shared_ptr<JobInfo> > unblockedJobs= bloquedJobs[jobID];
+	vector<shared_ptr<JobInfo> > &unblockedJobs= bloquedJobs[jobID];
 //	int limitCounter= unblockedJobs.size();
 //	for(int count =0; count < limitCounter; count++)
+
 	for(vector<shared_ptr<JobInfo>>::iterator it = unblockedJobs.begin(); it != unblockedJobs.end(); )
 	{
 		if( (*it).unique())
 		{
-			unblockedJobs.emplace_back(it);
+			unblockedJobs.emplace_back(*it);
 			it= unblockedJobs.erase(it);
 		}
 		else
 		{
 			it++;
 		}
+
 	}
 	ScheduleJobs(unblockedJobs);
 }

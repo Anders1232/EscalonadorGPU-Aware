@@ -10,8 +10,8 @@ RM = rm -f
 
 #Flags para geração automática de dependências
 DEP_FLAGS = -MT $@ -MMD -MP -MF $(DEP_PATH)/$.d
-LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm
-FLAGS= -std=c++11 -Wall -pedantic -Wextra -fmax-errors=5 -fdiagnostics-color
+LIBS = -lm
+FLAGS= -std=c++11 -Wall -pedantic -Wextra -fmax-errors=1 -fdiagnostics-color
 #FLAGS= -std=c++11 -Wall -pedantic -Wextra -fmax-errors=5
 
 INC_PATH = -Iinclude
@@ -25,7 +25,7 @@ OBJ_FILES= $(addprefix $(BIN_PATH)/,$(notdir $(CPP_FILES:.cpp=.o)))
 DEP_FILES = $(wildcard $(DEP_PATH)/*.d)
 
 #Nome do executável
-EXEC = JOGO
+EXEC = Escalonador
 
 #-------------------------------------------------------------
 #Caso o sistema seja windows
