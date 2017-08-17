@@ -1,0 +1,7 @@
+include/Comunicador.hpp
+include/Escalonador.hpp
+include/Job.h
+include/PluginInfo.h
+include/RatingMethod.h
+include/Serializable.h
+src/Escalonador.cpp

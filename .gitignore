@@ -31,3 +31,6 @@
 #gerados durante a compilação
 dep/
 bin/
+
+#Arquivos do Qt dependente de máquina:
+*.user
