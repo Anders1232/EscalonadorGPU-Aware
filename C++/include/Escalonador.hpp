@@ -22,8 +22,8 @@ class Escalonador
 	public:
 		RatingMethod *ratingMethod;
 		unique_ptr<unordered_map<Job, PluginInfo>> Schedule(vector<Job> jobs);
-		vector<PluginTask> Relocate(vector<std::pair<Job, PluginTask> > taskPairs);
-		void CancelJobEvent(PluginTask task);
+//		vector<PluginTask> Relocate(vector<std::pair<Job, PluginTask> > taskPairs);
+//		void CancelJobEvent(PluginTask task);
 		std::string GetPolicyName(void);
 }
 

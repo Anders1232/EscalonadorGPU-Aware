@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include "Host.h"
 
 class PluginInfo
 {
@@ -11,7 +12,7 @@ class PluginInfo
 		std::string id;
 		std::string instanceName;
 		int privateCloud;
-		//Host host
+		Host host;
 		int64_t upTime;
 		double latency;
 		double costPerGiga;
