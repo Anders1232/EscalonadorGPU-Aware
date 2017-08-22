@@ -20,11 +20,12 @@ typedef struct hostent HostEntry;
 class Comunicador
 {
 	public:
-		Comunicador(int port);
+		Comunicador(int port, int64_t handShakeMsg);
 		Escalonador escalonador;
 	private:
 		FileDescriptor socketFD;
-		SocketAddress other;
+		SocketAddress me, java;
+		char *buffer;
 }
 
 #endif
