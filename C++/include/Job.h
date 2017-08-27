@@ -10,8 +10,8 @@
 class Job : public Serializable<Job>
 {
 	public:
-		static char* Serialize(Job& instance);
-		static Job Deserialize(char* data);
+		std::string Serialize();
+		Job(char* data);
 		Job(void);
 //	private:
 		std::string id;
@@ -23,10 +23,10 @@ class Job : public Serializable<Job>
 		std::vector<std::string> outputs;
 		int64_t timestamp;
 		double worstExecution;
-		std::vector<string> dependecies;
+		std::vector<std::string> dependecies;
 		std::string referenceFile;
 		//adição
 		bool useGPU, useCPU;
-}
+};
 
 #endif // JOB_H

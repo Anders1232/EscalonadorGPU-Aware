@@ -1,3 +1,7 @@
+include/Error.h
+src/main.cpp
+Java/ByteUtils.java
+Java/CppSched.java
 src/Comunicador.cpp
 src/Escalonador.cpp
 Java/BasicSchedPolicy.java

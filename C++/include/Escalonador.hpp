@@ -25,6 +25,6 @@ class Escalonador
 //		vector<PluginTask> Relocate(vector<std::pair<Job, PluginTask> > taskPairs);
 //		void CancelJobEvent(PluginTask task);
 		std::string GetPolicyName(void);
-}
+};
 
 #endif

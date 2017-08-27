@@ -21,7 +21,7 @@ class PluginInfo
 		double ranking;
 		float fsSize;
 		double memoryTotal, memoryFree, currentFrequencyCore;
-		std::vector<PluginService> services;
+//		std::vector<PluginService> services;
 		double costPerHour, bandwith;
 		std::string ip, provider;
 		//adição

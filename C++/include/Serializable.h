@@ -1,12 +1,14 @@
 #ifndef SERIALIZABLE_H
 #define SERIALIZABLE_H
 
+#include <string>
+
 template <class T>
 class Serializable
 {
 	public:
-		virtual static char* Serialize(T& instance)=0;
-		virtual static T Deserialize(char* data)=0;
-}
+		virtual std::string Serialize()=0;
+//		virtual T(char const * serializedData)=0;
+};
 
 #endif // SERIALIZABLE_H

@@ -26,6 +26,6 @@ class Comunicador
 		FileDescriptor socketFD;
 		SocketAddress me, java;
 		char *buffer;
-}
+};
 
 #endif

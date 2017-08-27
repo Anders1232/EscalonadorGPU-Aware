@@ -9,6 +9,6 @@ class Host
 		std::string adderss;
 		int port;
 		Host(std::string address, int port);
-}
+};
 
 #endif // HOST_H
