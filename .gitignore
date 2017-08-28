@@ -34,3 +34,6 @@ bin/
 
 #Arquivos do Qt dependente de máquina:
 *.user
+
+#Gerados pelo Java
+*.class
