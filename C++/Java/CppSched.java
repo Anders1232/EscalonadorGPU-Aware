@@ -10,37 +10,52 @@ public class CppSched/* extends SchedPolicy*/
 {
 	DatagramSocket socket;
 	SocketAddress cppAddr;
+	public void Debug()
+	{
+		System.out.println("Java Aqui: ");
+		Thread.dumpStack();
+	}
 	public CppSched()
 	{
 		try
 		{
-			socket = new DatagramSocket();
-			System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
 			Random randomGenerator= new Random();
+			do
+			{
+				int portaEscolhida= randomGenerator.nextInt()%30000+31024;
+				System.out.println("Porta escolhida: " + portaEscolhida);
+				socket = new DatagramSocket(portaEscolhida);
+				Debug();
+			}
+			while(GetPort()== -1);
+			Debug();
 			long key= randomGenerator.nextLong();
-			System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
+			System.out.println("Porta escolhida: " + GetPort());
+			System.out.println("Número sorteado: " + key);
+//			System
+			Debug();
 			Runtime r = Runtime.getRuntime();
-			Process p = r.exec("./Escalonador "+ GetPort() + " " + key + " &");//my_command > output.log 2>&1 &
+			Process p = r.exec("./Escalonador.out "+ GetPort() + " " + key + " > /home/francisco/Escalonador.log 2>&1 &");//my_command > output.log 2>&1 &
 			DatagramPacket pkt= new DatagramPacket(new byte[65000], 65000);
-			System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
+			Debug();
 			long numReceived;
 			do
 			{
-				System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
+				Debug();
 				socket.receive(pkt);
-				System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
-				numReceived= ByteUtils.bytesToLong(pkt.getData() );
+				Debug();
+				numReceived= ByteUtils.bytesStringToLong(pkt.getData() );
 				if(numReceived != key)
 				{
 					System.out.println("worng key. Expecting " + key + ",  got " + numReceived );
 				}
 			}
 			while(numReceived != key);
-			System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
+			Debug();
 			cppAddr = pkt.getSocketAddress();
-			System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
+			Debug();
 			socket.send(new DatagramPacket(("Ack!").getBytes("US-ASCII"), 5, cppAddr));
-			System.out.println("Java Aqui: " + Thread.currentThread().getStackTrace()[0].getLineNumber());
+			Debug();
 		}
 		catch (Throwable e)
 		{
@@ -51,9 +66,9 @@ public class CppSched/* extends SchedPolicy*/
 	}
 	public int GetPort()
 	{
-		return socket.getPort();
+		return socket.getLocalPort();
 	}
-	public static void main(String []args)
+	public static void main(String[] args)
 	{
 		CppSched sched= new CppSched();
 		System.out.println("Yeah!");

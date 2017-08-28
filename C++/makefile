@@ -57,12 +57,17 @@ ifeq ($(UNAME_S), Darwin)
 LIBS = -lm -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf
 
 endif
+
+ifeq ($(UNAME_S), Linux)
+EXEC := $(EXEC).out
+endif
+
 endif
 
 all: $(EXEC)
 
 $(EXEC): $(OBJ_FILES)
-	$(COMPILER) -o $@ $^ $(LIBS)
+	$(COMPILER) -o $@ $^ $(LIBS) $(FLAGS)
 
 $(BIN_PATH)/%.o: $(SRC_PATH)/%.cpp
 
@@ -90,6 +95,9 @@ debug: all
 
 release: FLAGS += -O3 -mtune=native
 release: all
+
+again: clean
+again: all
 
 
 

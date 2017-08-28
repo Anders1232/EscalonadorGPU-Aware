@@ -28,7 +28,7 @@ Comunicador::Comunicador(int port, int64_t handShakeMsg)
 		Error("[ERROR] Fail opening socket\n");
 	}
 	
-	buffer = new char[BUFFER_SIZE];
+	buffer = new char[BUFFER_SIZE];		//desalocar no destrutor
 	memset(buffer, 0, BUFFER_SIZE*sizeof(char));
 	sprintf(buffer, "%ld", handShakeMsg);
 	TEMP_REPORT_I_WAS_HERE;
@@ -38,8 +38,8 @@ Comunicador::Comunicador(int port, int64_t handShakeMsg)
 	{
 		Error("[ERROR] Error writing to socket\n");
 	}
-	uint recievedSocketLenght= sizeof(SocketAddress);
-	SocketAddress recievedSocket;
+	uint recievedSocketLenght= sizeof(sockaddr_storage);
+	sockaddr_storage recievedSocket;
 	TEMP_REPORT_I_WAS_HERE;
 	bytesReadOrWritten= recvfrom(socketFD, buffer, BUFFER_SIZE, 0, (struct sockaddr*) &recievedSocket, &recievedSocketLenght);
 	TEMP_REPORT_I_WAS_HERE;
@@ -47,7 +47,7 @@ Comunicador::Comunicador(int port, int64_t handShakeMsg)
 	{
 		Error("[ERROR] Error reading from socket\n");
 	}
-	if(recievedSocket.sin6_port != java.sin6_port)
+	if( ( ( (SocketAddress*)&recievedSocket) )->sin6_port != java.sin6_port)
 	{
 		Error("Expected msg from the same port we sent to");
 	}
