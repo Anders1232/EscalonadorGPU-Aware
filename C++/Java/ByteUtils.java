@@ -14,8 +14,8 @@ public class ByteUtils
 	{
 //		buffer.put(bytes, 0, bytes.length);
 //		buffer.flip();//need flip 
-		System.out.println("String gerada dos bytes: " + new String(bytes, StandardCharsets.US_ASCII));
-		return Long.parseLong(new String(bytes, StandardCharsets.US_ASCII), 10);
+//		System.out.println("String gerada dos bytes: " + new String(bytes, StandardCharsets.US_ASCII));
+		return Long.parseLong((new String(bytes, StandardCharsets.US_ASCII)).trim(), 10);
 //		return buffer.getLong();
 	}
 }
