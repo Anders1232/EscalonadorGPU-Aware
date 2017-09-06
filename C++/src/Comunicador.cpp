@@ -57,4 +57,6 @@ Comunicador::Comunicador(int port, int64_t handShakeMsg)
 	}
 	TEMP_REPORT_I_WAS_HERE;
 	printf("Handshake sucess!");
+	
+	
 }

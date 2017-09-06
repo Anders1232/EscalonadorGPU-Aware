@@ -12,6 +12,7 @@ public class CppSched/* extends SchedPolicy*/
 	DatagramSocket socket;
 	SocketAddress cppAddr;
 	boolean debug=false;
+	protected abstract String GetSchedPolicy();
 	public void Debug()
 	{
 		if(debug)
@@ -44,46 +45,15 @@ public class CppSched/* extends SchedPolicy*/
 			DatagramPacket pkt= new DatagramPacket(new byte[65000], 65000);
 			Debug();
 			long numReceived;
-			boolean mostrarBruxariaDoJava= false;
 			do
 			{
 				Debug();
 				socket.receive(pkt);
 				Debug();
-				if(mostrarBruxariaDoJava)
-				{
-					System.out.println(new String(pkt.getData(), StandardCharsets.US_ASCII) + "= rede");
-					System.out.println(String.valueOf(key) + "= gerado");
-					System.out.println(new String(pkt.getData(), StandardCharsets.US_ASCII).getBytes() + "= rede");
-					System.out.println(String.valueOf(key).getBytes() + "= gerado");
-					System.out.println(new String(pkt.getData(), StandardCharsets.US_ASCII).getBytes(StandardCharsets.US_ASCII) + "= rede ASCII");
-					System.out.println(String.valueOf(key).getBytes(StandardCharsets.US_ASCII) + "= gerado ASCII");
-					System.out.println(new String(pkt.getData(), StandardCharsets.US_ASCII).getBytes(StandardCharsets.US_ASCII) + "= rede ASCII -> ASCII");
-					System.out.println(String.valueOf(key).getBytes(StandardCharsets.US_ASCII) + "= gerado ASCII -> ASCII");
-					System.out.println(new String(pkt.getData(), StandardCharsets.US_ASCII).toCharArray() + "= rede char array");
-					System.out.println(String.valueOf(key).toCharArray() + "= gerado char array");
-	
-					
-					String receivedString= new String(pkt.getData(), StandardCharsets.US_ASCII);
-					String originalString= String.valueOf(key);
-					System.out.println("tamanho original: " + originalString.length());
-					System.out.println("tamanho recebido: " + receivedString.length());
-					for(int count=0; count < originalString.length(); count++)
-					{
-						System.out.println("[" + count + "]" + originalString.charAt(count) + " : original");
-						System.out.println("[" + count + "]" + receivedString.charAt(count) + " : recebido");
-						
-					}
-					
-					if( (new String(pkt.getData(), StandardCharsets.US_ASCII) ).equals(String.valueOf(key)) )
-					{
-						System.out.println("Aha!");
-					}
-				}
 				numReceived= ByteUtils.bytesStringToLong(pkt.getData() );
 				if(numReceived != key)
 				{
-					System.out.println("worng key. Expecting " + key + ",  got " + numReceived );
+					System.out.println("wrong key. Expecting " + key + ",  got " + numReceived );
 				}
 			}
 			while(numReceived != key);
@@ -92,6 +62,17 @@ public class CppSched/* extends SchedPolicy*/
 			Debug();
 			socket.send(new DatagramPacket(("Ack!").getBytes("US-ASCII"), ("Ack!").getBytes("US-ASCII").length, cppAddr));
 			Debug();
+			
+			//enviar escalonador desejado
+			String schedType= GetSchedPolicy();
+			socket.send(new DatagramPacket((schedType).getBytes("US-ASCII"), schedType.getBytes("US-ASCII").length, cppAddr));
+			if(Receive("[SchedTypeAwnser]").contains("Fail"))
+			{
+				Debug();
+				throw(new String(Deu ruim));
+			}
+			
+			
 		}
 		catch (Throwable e)
 		{
@@ -109,5 +90,22 @@ public class CppSched/* extends SchedPolicy*/
 		CppSched sched= new CppSched();
 		System.out.println("Yeah!");
 		
+	}
+	protected String Receive(String begin)
+	{
+		DatagramPacket pkt= new DatagramPacket(new byte[65000], 65000);
+		String received;
+		do
+		{
+			Debug();
+			socket.receive(pkt);
+			received= pkt.getData().toString().trim();
+			if(!received.startsWith(begin))
+			{
+				System.out.println("wrong key. Expecting " + begin + ",  got " + pkt.getData().toString() );
+			}
+		}
+		while(!received.startsWith(begin));
+		return received;
 	}
 }
