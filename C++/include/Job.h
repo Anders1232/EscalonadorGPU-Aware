@@ -27,6 +27,7 @@ class Job : public Serializable<Job>
 		std::string referenceFile;
 		//adição
 		bool useGPU, useCPU;
+		float gpuPref;
 };
 
 #endif // JOB_H

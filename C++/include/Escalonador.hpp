@@ -10,21 +10,17 @@
 
 #include "PluginInfo.h"
 #include "Job.h"
-#include "RatingMethod.h"
-
-using std::vector;
-using std::unordered_map;
-using std::shared_ptr;
-using std::unique_ptr;
 
 class Escalonador
 {
 	public:
-		RatingMethod *ratingMethod;
-		unique_ptr<unordered_map<Job, PluginInfo>> Schedule(vector<Job> jobs);
+		virtual std::unique_ptr<std::unordered_map<Job, PluginInfo>> Schedule(std::vector<Job> jobs)=0;
 //		vector<PluginTask> Relocate(vector<std::pair<Job, PluginTask> > taskPairs);
 //		void CancelJobEvent(PluginTask task);
-		std::string GetPolicyName(void);
+		virtual std::string GetPolicyName(void) =0;
+		void UpdateCloudMap(std::unique_ptr<std::unordered_map<std::string, PluginInfo> > newMap);
+	private:
+		std::unique_ptr<std::unordered_map<std::string, PluginInfo> > cloudMap;
 };
 
 #endif

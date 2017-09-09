@@ -21,7 +21,7 @@ class Comunicador
 {
 	public:
 		Comunicador(int port, int64_t handShakeMsg);
-		Escalonador escalonador;
+		Escalonador *escalonador;
 	private:
 		FileDescriptor socketFD;
 		SocketAddress me, java;
