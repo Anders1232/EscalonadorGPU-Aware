@@ -14,13 +14,13 @@
 class Escalonador
 {
 	public:
-		virtual std::unique_ptr<std::unordered_map<Job, PluginInfo>> Schedule(std::vector<Job> jobs)=0;
+		virtual std::unique_ptr<std::unordered_map<Job, PluginInfo>> Schedule(std::vector<Job> const &jobs, std::unordered_map<std::string, PluginInfo> const &cloudMap)=0;
 //		vector<PluginTask> Relocate(vector<std::pair<Job, PluginTask> > taskPairs);
 //		void CancelJobEvent(PluginTask task);
 		virtual std::string GetPolicyName(void) =0;
 		void UpdateCloudMap(std::unique_ptr<std::unordered_map<std::string, PluginInfo> > newMap);
-	private:
-		std::unique_ptr<std::unordered_map<std::string, PluginInfo> > cloudMap;
+	protected:
+//		std::unique_ptr<std::unordered_map<std::string, PluginInfo> > cloudMap;
 };
 
 #endif

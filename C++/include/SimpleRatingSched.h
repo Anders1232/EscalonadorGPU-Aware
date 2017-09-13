@@ -10,6 +10,6 @@ class SimpleRatingSched: public Escalonador{
 		std::string GetPolicyName(void);
 	private:
 		SimpleRatingMethod ratingMethod;
-}
+};
 
 #endif // SIMPLERATINGSCHED_H

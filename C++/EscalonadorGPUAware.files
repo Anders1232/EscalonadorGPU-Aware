@@ -1,6 +1,7 @@
 include/Error.h
 include/SimpleRatingMethod.h
 include/SimpleRatingSched.h
+src/Job.cpp
 src/SimpleRatingMethod.cpp
 src/SimpleRatingSched.cpp
 src/main.cpp

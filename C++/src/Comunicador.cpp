@@ -6,6 +6,11 @@
 #include <stdio.h>
 
 #include "Error.h"
+#include "SimpleRatingSched.h"
+
+#define BIONIMBUZ_PREFIX_SCHED "[BioNimbuZ]SCHED="
+#define BIONIMBUZ_SCHED_SIMPLE_RATING_SCHED "[BioNimbuZ]SIMPLE_RATING_SCHED"
+#define BIONIMBUZ_UNKNOWN_SCHED "[BioNimbuZ]UNKNOWN_SCHED"
 
 Comunicador::Comunicador(int port, int64_t handShakeMsg)
 {
@@ -32,7 +37,7 @@ Comunicador::Comunicador(int port, int64_t handShakeMsg)
 	memset(buffer, 0, BUFFER_SIZE*sizeof(char));
 	sprintf(buffer, "%ld", handShakeMsg);
 	TEMP_REPORT_I_WAS_HERE;
-	int bytesReadOrWritten= sendto(socketFD, buffer, strlen(buffer), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
+	bytesReadOrWritten= sendto(socketFD, buffer, strlen(buffer), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
 	TEMP_REPORT_I_WAS_HERE;
 	if(bytesReadOrWritten < 0)
 	{
@@ -58,5 +63,45 @@ Comunicador::Comunicador(int port, int64_t handShakeMsg)
 	TEMP_REPORT_I_WAS_HERE;
 	printf("Handshake sucess!");
 	
-	
+	DefineSched();
 }
+
+std::string Comunicador::Receive(std::string begin)
+{
+	uint recievedSocketLenght= sizeof(sockaddr_storage);
+	sockaddr_storage recievedSocket;
+	do{
+		memset(buffer, '\0', BUFFER_SIZE);
+		bytesReadOrWritten= recvfrom(socketFD, buffer, BUFFER_SIZE, 0, (struct sockaddr*) &recievedSocket, &recievedSocketLenght);
+		ASSERT(bytesReadOrWritten>0);
+		if( ( ( (SocketAddress*)&recievedSocket) )->sin6_port != java.sin6_port){
+			std::cout<< "Received message from wrong origin, ignoring it. Message: "<< buffer;
+		}
+		if(NULL == strstr(buffer, begin.c_str())){
+			std::cout<< "Received invalid message, ignoring it. Message: "<< buffer;
+		}
+		else{
+			break;
+		}
+	}
+	while(1);
+	return buffer;
+}
+
+
+void Comunicador::DefineSched(void){
+	bool success= false;
+	do{
+		std::string msg= Receive(BIONIMBUZ_PREFIX_SCHED);
+		if(std::string::npos == msg.find(BIONIMBUZ_SCHED_SIMPLE_RATING_SCHED)){
+			bytesReadOrWritten= sendto(socketFD, BIONIMBUZ_UNKNOWN_SCHED, STRLEN(BIONIMBUZ_UNKNOWN_SCHED), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
+			ASSERT2(bytesReadOrWritten > 0, "[ERROR] Error writing to socket\n");
+		}
+		else{
+			sched= new SimpleRatingSched();
+			success=true;
+		}
+	}
+	while(!success);
+}
+

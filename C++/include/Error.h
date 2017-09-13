@@ -43,6 +43,8 @@ using std::endl;
 
 typedef unsigned int uint;
 
+#define STRLEN(s) (sizeof(s)/sizeof(s[0]))
+
 //void Error(char const * errMsg);
 
 #endif // ERROR_H

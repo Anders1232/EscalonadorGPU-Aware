@@ -21,11 +21,16 @@ class Comunicador
 {
 	public:
 		Comunicador(int port, int64_t handShakeMsg);
-		Escalonador *escalonador;
 	private:
 		FileDescriptor socketFD;
 		SocketAddress me, java;
 		char *buffer;
+		int bytesReadOrWritten;
+		
+		std::string Receive(std::string begin);
+		Escalonador *sched;
+		void DefineSched(void);
+		
 };
 
 #endif
