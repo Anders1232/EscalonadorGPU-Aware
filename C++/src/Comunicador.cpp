@@ -11,6 +11,7 @@
 #define BIONIMBUZ_PREFIX_SCHED "[BioNimbuZ]SCHED="
 #define BIONIMBUZ_SCHED_SIMPLE_RATING_SCHED "[BioNimbuZ]SIMPLE_RATING_SCHED"
 #define BIONIMBUZ_UNKNOWN_SCHED "[BioNimbuZ]UNKNOWN_SCHED"
+#define BIONIMBUZ_STATUS_OK "[BioNimbuZ]STATUS_OK"
 
 Comunicador::Comunicador(int port, int64_t handShakeMsg)
 {
@@ -93,13 +94,14 @@ void Comunicador::DefineSched(void){
 	bool success= false;
 	do{
 		std::string msg= Receive(BIONIMBUZ_PREFIX_SCHED);
-		if(std::string::npos == msg.find(BIONIMBUZ_SCHED_SIMPLE_RATING_SCHED)){
-			bytesReadOrWritten= sendto(socketFD, BIONIMBUZ_UNKNOWN_SCHED, STRLEN(BIONIMBUZ_UNKNOWN_SCHED), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
-			ASSERT2(bytesReadOrWritten > 0, "[ERROR] Error writing to socket\n");
-		}
-		else{
+		if(std::string::npos != msg.find(BIONIMBUZ_SCHED_SIMPLE_RATING_SCHED)){
 			sched= new SimpleRatingSched();
 			success=true;
+			bytesReadOrWritten= sendto(socketFD, , strlen(buffer), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
+		}
+		else{
+			bytesReadOrWritten= sendto(socketFD, BIONIMBUZ_UNKNOWN_SCHED, STRLEN(BIONIMBUZ_UNKNOWN_SCHED), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
+			ASSERT2(bytesReadOrWritten > 0, "[ERROR] Error writing to socket\n");
 		}
 	}
 	while(!success);

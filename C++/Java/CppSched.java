@@ -71,6 +71,7 @@ public class CppSched/* extends SchedPolicy*/
 				Debug();
 				throw(new String(Deu ruim));
 			}
+			System.out.println("Escalonador gerado!");
 			
 			
 		}
