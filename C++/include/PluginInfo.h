@@ -5,10 +5,14 @@
 #include <vector>
 #include <stdint.h>
 #include "Host.h"
+#include "Serializable.h"
 
-class PluginInfo
+class PluginInfo: public Serializable<PluginInfo>
 {
 	public:
+		std::string Serialize(void);
+		PluginInfo(std::string const &str);
+		
 		std::string id;
 		std::string instanceName;
 		int privateCloud;
@@ -17,7 +21,7 @@ class PluginInfo
 		double latency;
 		double costPerGiga;
 		int64_t timestamp;
-		int numCores, numNodes, numOccupied;
+		int numCores, numNodes, numOccupied;//numNodes é o número de máquinas desse tipo disponível para o escalonamento?
 		double ranking;
 		float fsSize;
 		double memoryTotal, memoryFree, currentFrequencyCore;

@@ -10,12 +10,12 @@ bool PluginInfoComparer(PluginInfo const &a, PluginInfo const &b){
 	return a.ranking < b.ranking;
 }
 
-std::unique_ptr<std::unordered_map<Job, PluginInfo>> SimpleRatingSched::Schedule(std::vector<Job> jobs){
+std::unique_ptr<std::unordered_map<Job, PluginInfo>> SimpleRatingSched::Schedule(std::vector<Job> const &jobs, std::unordered_map<std::string, PluginInfo> const &cloudMap){
 	std::vector<Job> sortedJobs(jobs.begin(), jobs.end());
 	std::sort(sortedJobs.begin(), sortedJobs.end(), JobComparer);
 //	std::vector<PluginInfo> machines((*cloudMap).begin(), (*cloudMap).end());
 	std::vector<PluginInfo> machines;
-	for(auto it= (*cloudMap).begin(); it != (*cloudMap).end(); it++){
+	for(auto it= (cloudMap).begin(); it != (cloudMap).end(); it++){
 		machines.push_back(it->second);
 	}
 	std::sort(machines.begin(), machines.end(), PluginInfoComparer);

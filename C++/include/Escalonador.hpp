@@ -18,7 +18,7 @@ class Escalonador
 //		vector<PluginTask> Relocate(vector<std::pair<Job, PluginTask> > taskPairs);
 //		void CancelJobEvent(PluginTask task);
 		virtual std::string GetPolicyName(void) =0;
-		void UpdateCloudMap(std::unique_ptr<std::unordered_map<std::string, PluginInfo> > newMap);
+//		void UpdateCloudMap(std::unique_ptr<std::unordered_map<std::string, PluginInfo> > newMap);
 	protected:
 //		std::unique_ptr<std::unordered_map<std::string, PluginInfo> > cloudMap;
 };

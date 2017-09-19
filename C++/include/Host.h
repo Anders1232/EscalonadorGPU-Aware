@@ -8,7 +8,8 @@ class Host
 	public:
 		std::string adderss;
 		int port;
-		Host(std::string address, int port);
+		Host(std::string address, int port):adderss(address), port(port){}
+		Host(void){}
 };
 
 #endif // HOST_H

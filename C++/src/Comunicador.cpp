@@ -12,6 +12,7 @@
 #define BIONIMBUZ_SCHED_SIMPLE_RATING_SCHED "[BioNimbuZ]SIMPLE_RATING_SCHED"
 #define BIONIMBUZ_UNKNOWN_SCHED "[BioNimbuZ]UNKNOWN_SCHED"
 #define BIONIMBUZ_STATUS_OK "[BioNimbuZ]STATUS_OK"
+#define BIONIMBUZ_SCHED_DEFINED "[BioNimbuZ]SSCHEDULER_DEFINED"
 
 Comunicador::Comunicador(int port, int64_t handShakeMsg)
 {
@@ -97,7 +98,7 @@ void Comunicador::DefineSched(void){
 		if(std::string::npos != msg.find(BIONIMBUZ_SCHED_SIMPLE_RATING_SCHED)){
 			sched= new SimpleRatingSched();
 			success=true;
-			bytesReadOrWritten= sendto(socketFD, , strlen(buffer), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
+			bytesReadOrWritten= sendto(socketFD, BIONIMBUZ_SCHED_DEFINED, STRLEN(BIONIMBUZ_SCHED_DEFINED), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
 		}
 		else{
 			bytesReadOrWritten= sendto(socketFD, BIONIMBUZ_UNKNOWN_SCHED, STRLEN(BIONIMBUZ_UNKNOWN_SCHED), 0, (struct sockaddr*)&java, sizeof(sockaddr_in6));
