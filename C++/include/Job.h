@@ -7,12 +7,15 @@
 #include <vector>
 #include <Serializable.h>
 
+
 class Job : public Serializable<Job>
 {
 	public:
+		bool operator==(Job const &b);
 		std::string Serialize();
 		Job(std::string const &data);
-		Job(void);
+		Job(void){};
+		static bool TestSerialization(void);
 //	private:
 		std::string id;
 		int64_t testId;

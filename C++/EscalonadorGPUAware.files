@@ -6,6 +6,7 @@ src/Job.cpp
 src/PluginInfo.cpp
 src/SimpleRatingMethod.cpp
 src/SimpleRatingSched.cpp
+src/Tests.cpp
 src/main.cpp
 Java/ByteUtils.java
 Java/CppSched.java

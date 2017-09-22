@@ -14,11 +14,11 @@ std::string Job::Serialize(){
 	ret+= '\n';
 	
 	ret+= "testId=";
-	ret+= testId;
+	ret+= std::to_string(testId);
 	ret+= '\n';
 	
 	ret+= "localID=";
-	ret+= testId;
+	ret+= localID;
 	ret+= '\n';
 	
 	ret+= "serviceId=";
@@ -30,39 +30,39 @@ std::string Job::Serialize(){
 	ret+= '\n';
 	
 	ret+= "ipJob=";
-	ret+= ipJob.size();
+	ret+= std::to_string(ipJob.size() );
 	for(uint i=0; i < ipJob.size(); i++){
 		ret+= '>';
 		ret+= ipJob[i];
 	}
 	
-	ret+= "inputURL=";
+	ret+= "\ninputURL=";
 	ret+= inputURL;
 	ret+= '\n';
 	
 	ret+= "outputs=";
-	ret+= outputs.size();
+	ret+= std::to_string(outputs.size() );
 	for(uint i=0; i < outputs.size(); i++){
 		ret+= '>';
 		ret+= outputs[i];
 	}
 	
-	ret+= "timestamp=";
-	ret+= timestamp;
+	ret+= "\ntimestamp=";
+	ret+= std::to_string(timestamp);
 	ret+= '\n';
 	
 	ret+= "worstExecution=";
-	ret+= worstExecution;
+	ret+= std::to_string(worstExecution);
 	ret+= '\n';
 	
 	ret+= "dependecies=";
-	ret+= dependecies.size();
+	ret+= std::to_string(dependecies.size() );
 	for(uint i=0; i < dependecies.size(); i++){
 		ret+= '>';
 		ret+= dependecies[i];
 	}
 	
-	ret+= "referenceFile=";
+	ret+= "\nreferenceFile=";
 	ret+= referenceFile;
 	ret+= '\n';
 	
@@ -75,7 +75,7 @@ std::string Job::Serialize(){
 	ret+= '\n';
 	
 	ret+= "gpuPref=";
-	ret+= gpuPref;
+	ret+= std::to_string(gpuPref);
 	ret+= '\n';
 	
 	return ret;
@@ -168,4 +168,52 @@ Job::Job(std::string const &str){
 	
 	operator delete[](temp);
 }
+
+bool Job::operator==(Job const &other){
+	bool ret= true;
+	ret= ret && (id==other.id);
+	ret= ret && (testId == other.testId);
+	ret= ret && (localID == other.localID);
+	ret= ret && (serviceId == other.serviceId);
+	ret= ret && (args == other.args);
+	ret= ret && (ipJob == other.ipJob);
+	ret= ret && (inputURL == other.inputURL);
+	ret= ret && (outputs == other.outputs);
+	ret= ret && (timestamp == other.timestamp);
+	ret= ret && (worstExecution == other.worstExecution);
+	ret= ret && (dependecies == other.dependecies);
+	ret= ret && (referenceFile == other.referenceFile);
+	ret= ret && (useCPU == other.useCPU);
+	ret= ret && (useGPU == other.useGPU);
+	ret= ret && (gpuPref == other.gpuPref);
+	return ret;
+}
+
+bool Job::TestSerialization(void){
+	Job a;
+	a.id = "testeId";
+	a.testId= 1;
+	a.localID= "testelLocalID";
+	a.serviceId= "testelServiderId";
+	a.args= "testeargs";
+	a.ipJob.push_back("Teste1");
+	a.ipJob.push_back("Teste2");
+	a.inputURL= "uma.url";
+	a.outputs.push_back("output1");
+	a.outputs.push_back("output2");
+	a.timestamp= 123123;
+	a.worstExecution= 123.35678;
+	a.dependecies.push_back("dep1");
+	a.dependecies.push_back("dep2");
+	a.referenceFile= "ref";
+	a.useCPU= true;
+	a.useGPU= false;
+	a.gpuPref= 1.27;
+	std::string serializated= a.Serialize();
+	printf("\n------\n%s\n------\n", serializated.c_str());
+	Job b(serializated);
+	return a==b;
+}
+
+
 
