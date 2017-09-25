@@ -114,20 +114,29 @@ Job::Job(std::string const &str){
 	args= buffer;
 	
 	int vecSize;
-	token= strtok(NULL, delimiter);
+	token= strtok(NULL, ">\n");
 	ASSERT(1 == sscanf(token, "ipJob=%d>", &vecSize) );
+#ifdef DEBUG
+	REPORT_DEBUG("token= " << token << "\n");
+#endif
 	ipJob.resize(vecSize);
 	for(int i=0; i < vecSize; i++){
 		token= strtok(NULL, ">\n");
+#ifdef DEBUG
+	REPORT_DEBUG("token= " << token << "\n");
+#endif
 		ASSERT(1 == sscanf(token, "%[^\n]", buffer) );
 		ipJob[i]= buffer;
 	}
 	
 	token= strtok(NULL, delimiter);
-	ASSERT(1 == sscanf(token, "inputURL=%[^\n]", buffer) );
+	ASSERT2(1 == sscanf(token, "inputURL=%[^\n]", buffer), "token = " << token );
 	inputURL= buffer;
+#ifdef DEBUG
+	REPORT_DEBUG("token= " << token << "\n");
+#endif
 	
-	token= strtok(NULL, delimiter);
+	token= strtok(NULL, ">\n");
 	ASSERT(1 == sscanf(token, "outputs=%d>", &vecSize) );
 	outputs.resize(vecSize);
 	for(int i=0; i < vecSize; i++){
@@ -142,7 +151,7 @@ Job::Job(std::string const &str){
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "worstExecution=%lf", &worstExecution) );
 	
-	token= strtok(NULL, delimiter);
+	token= strtok(NULL, ">\n");
 	ASSERT(1 == sscanf(token, "dependecies=%d>", &vecSize) );
 	dependecies.resize(vecSize);
 	for(int i=0; i < vecSize; i++){
