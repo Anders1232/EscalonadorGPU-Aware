@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <vector>
 #include "Serializable.h"
+#include "FileInfo.h"
 
 
 class Job : public Serializable<Job>
@@ -21,7 +22,7 @@ class Job : public Serializable<Job>
 		int64_t testId;
 		std::string localID, serviceId, args;
 		std::vector<std::string> ipJob;//ver o que Transient significa
-//		std::vector<FILE*> inputFiles;
+		std::vector<FileInfo> inputFiles;
 		std::string inputURL;
 		std::vector<std::string> outputs;
 		int64_t timestamp;

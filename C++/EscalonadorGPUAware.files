@@ -4,6 +4,7 @@ include/Error.h
 include/FileInfo.h
 include/SimpleRatingMethod.h
 include/SimpleRatingSched.h
+src/FileInfo.cpp
 src/Job.cpp
 src/PluginInfo.cpp
 src/SimpleRatingMethod.cpp

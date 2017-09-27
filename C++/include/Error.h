@@ -15,7 +15,7 @@
 using std::endl;
 
 #ifndef DEBUG
-	#define DEBUG 0
+	#define DEBUG 1
 #endif
 #define CONVERSAO_GRAUS_RADIANOS 57.324840764
 
@@ -44,6 +44,8 @@ using std::endl;
 typedef unsigned int uint;
 
 #define STRLEN(s) (sizeof(s)/sizeof(s[0]))
+
+#define COMPARE(X){if(X != other.X){std::cout<<"[WARNING]\t"<<WHERE<<"\tComparation failed: ours: " << X << "\t other: " << other.X <<END_LINE;}}
 
 //void Error(char const * errMsg);
 

@@ -36,6 +36,13 @@ std::string Job::Serialize(){
 		ret+= ipJob[i];
 	}
 	
+	ret+="\ninputFiles=";
+	ret+= std::to_string(inputFiles.size() );
+	for(uint i=0; i < inputFiles.size(); i++){
+		ret+= '>';
+		ret+= inputFiles[i].Serialize();
+	}
+	
 	ret+= "\ninputURL=";
 	ret+= inputURL;
 	ret+= '\n';
@@ -129,6 +136,16 @@ Job::Job(std::string const &str){
 		ipJob[i]= buffer;
 	}
 	
+	token= strtok(NULL, ">\n");
+	ASSERT(1 == sscanf(token, "inputFiles=%d>", &vecSize) );
+#ifdef DEBUG
+	REPORT_DEBUG("token= " << token << "\n");
+#endif
+	inputFiles.resize(vecSize);
+	for(int i=0; i < vecSize; i++){
+		inputFiles[i]= FileInfo(str);
+	}
+	
 	token= strtok(NULL, delimiter);
 	ASSERT2(1 == sscanf(token, "inputURL=%[^\n]", buffer), "token = " << token );
 	inputURL= buffer;
@@ -180,12 +197,21 @@ Job::Job(std::string const &str){
 
 bool Job::operator==(Job const &other){
 	bool ret= true;
+	COMPARE(id);
 	ret= ret && (id==other.id);
+	COMPARE(testId);
 	ret= ret && (testId == other.testId);
+	COMPARE(localID);
 	ret= ret && (localID == other.localID);
+	COMPARE(serviceId);
 	ret= ret && (serviceId == other.serviceId);
+	COMPARE(args);
 	ret= ret && (args == other.args);
+//	COMPARE(ipJob);
 	ret= ret && (ipJob == other.ipJob);
+//	COMPARE(inputFiles);
+	ret= ret && (inputFiles == other.inputFiles);
+	COMPARE(inputURL);
 	ret= ret && (inputURL == other.inputURL);
 	ret= ret && (outputs == other.outputs);
 	ret= ret && (timestamp == other.timestamp);
@@ -207,6 +233,22 @@ bool Job::TestSerialization(void){
 	a.args= "testeargs";
 	a.ipJob.push_back("Teste1");
 	a.ipJob.push_back("Teste2");
+	a.inputFiles.push_back(FileInfo(
+							"fileInfo1",
+							"fileinfo1Name",
+							10,
+							11,
+							"uploadTimestamp1",
+							"hash1",
+							"bucket1"));
+	a.inputFiles.push_back(FileInfo(
+							"fileInfo2",
+							"fileinfo2Name",
+							12,
+							122,
+							"uploadTimestamp2",
+							"hash2",
+							"bucket2"));
 	a.inputURL= "uma.url";
 	a.outputs.push_back("output1");
 	a.outputs.push_back("output2");
