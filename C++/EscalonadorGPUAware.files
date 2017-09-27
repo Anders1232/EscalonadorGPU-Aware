@@ -1,5 +1,7 @@
 Java/CppSimpleRating.java
+Java/FileInfo.java
 include/Error.h
+include/FileInfo.h
 include/SimpleRatingMethod.h
 include/SimpleRatingSched.h
 src/Job.cpp
