@@ -66,32 +66,40 @@ FileInfo::FileInfo(std::string const & serializedData){
 	token= strtok(NULL, delimiter);
 	ASSERT2(1 == sscanf(token, "%[^\n]", buffer), "token = " << token);
 	ASSERT2( (!strcmp(token, "FILE_INFO") || (!strcmp(token, ">FILE_INFO") ) ) , "token = " << token);
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT2(1 == sscanf(token, "id=%[^\n]", buffer), "token = " << token);
 	id= buffer;
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "name=%[^\n]", buffer) );
 	name= buffer;
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "size=%ld", &size) );
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "userId=%ld", &userId) );
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "uploadTimestamp=%[^\n]", buffer) );
 	uploadTimestamp= buffer;
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "hash=%[^\n]", buffer) );
 	hash= buffer;
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "bucket=%[^\n]", buffer) );
 	bucket= buffer;
+	REPORT_DEBUG("token= " << token << "\n");
 	
 }
 

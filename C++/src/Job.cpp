@@ -123,24 +123,18 @@ Job::Job(std::string const &str){
 	int vecSize;
 	token= strtok(NULL, ">\n");
 	ASSERT(1 == sscanf(token, "ipJob=%d>", &vecSize) );
-#ifdef DEBUG
 	REPORT_DEBUG("token= " << token << "\n");
-#endif
 	ipJob.resize(vecSize);
 	for(int i=0; i < vecSize; i++){
 		token= strtok(NULL, ">\n");
-#ifdef DEBUG
-	REPORT_DEBUG("token= " << token << "\n");
-#endif
+		REPORT_DEBUG("token= " << token << "\n");
 		ASSERT(1 == sscanf(token, "%[^\n]", buffer) );
 		ipJob[i]= buffer;
 	}
 	
 	token= strtok(NULL, ">\n");
 	ASSERT(1 == sscanf(token, "inputFiles=%d>", &vecSize) );
-#ifdef DEBUG
 	REPORT_DEBUG("token= " << token << "\n");
-#endif
 	inputFiles.resize(vecSize);
 	for(int i=0; i < vecSize; i++){
 		inputFiles[i]= FileInfo(str);
@@ -149,9 +143,7 @@ Job::Job(std::string const &str){
 	token= strtok(NULL, delimiter);
 	ASSERT2(1 == sscanf(token, "inputURL=%[^\n]", buffer), "token = " << token );
 	inputURL= buffer;
-#ifdef DEBUG
 	REPORT_DEBUG("token= " << token << "\n");
-#endif
 	
 	token= strtok(NULL, ">\n");
 	ASSERT(1 == sscanf(token, "outputs=%d>", &vecSize) );
@@ -159,38 +151,47 @@ Job::Job(std::string const &str){
 	for(int i=0; i < vecSize; i++){
 		token= strtok(NULL, ">\n");
 		ASSERT(1 == sscanf(token, "%[^\n]", buffer) );
+		REPORT_DEBUG("token= " << token << "\n");
 		outputs[i]= buffer;
 	}
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "timestamp=%ld", &timestamp) );
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "worstExecution=%lf", &worstExecution) );
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	token= strtok(NULL, ">\n");
 	ASSERT(1 == sscanf(token, "dependecies=%d>", &vecSize) );
+	REPORT_DEBUG("token= " << token << "\n");
 	dependecies.resize(vecSize);
 	for(int i=0; i < vecSize; i++){
 		token= strtok(NULL, ">\n");
 		ASSERT(1 == sscanf(token, "%[^\n]", buffer) );
+		REPORT_DEBUG("token= " << token << "\n");
 		dependecies[i]= buffer;
 	}
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "referenceFile=%[^\n]", buffer) );
+	REPORT_DEBUG("token= " << token << "\n");
 	referenceFile= buffer;
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "useGPU=%[^\n]", buffer) );
-	useCPU= !strcmp(buffer, "true");
+	REPORT_DEBUG("token= " << token << "\n");
+	useGPU= !strcmp(buffer, "true");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "useCPU=%[^\n]", buffer) );
+	REPORT_DEBUG("token= " << token << "\n");
 	useCPU= !strcmp(buffer, "true");
 	
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "gpuPref=%f", &gpuPref) );
+	REPORT_DEBUG("token= " << token << "\n");
 	
 	operator delete[](temp);
 }
@@ -207,19 +208,27 @@ bool Job::operator==(Job const &other){
 	ret= ret && (serviceId == other.serviceId);
 	COMPARE(args);
 	ret= ret && (args == other.args);
-//	COMPARE(ipJob);
+	COMPARE_VECTOR(ipJob);
 	ret= ret && (ipJob == other.ipJob);
-//	COMPARE(inputFiles);
+	COMPARE_VECTOR(inputFiles);
 	ret= ret && (inputFiles == other.inputFiles);
 	COMPARE(inputURL);
 	ret= ret && (inputURL == other.inputURL);
+	COMPARE_VECTOR(outputs);
 	ret= ret && (outputs == other.outputs);
+	COMPARE(timestamp);
 	ret= ret && (timestamp == other.timestamp);
+	COMPARE(worstExecution);
 	ret= ret && (worstExecution == other.worstExecution);
+	COMPARE_VECTOR(dependecies);
 	ret= ret && (dependecies == other.dependecies);
+	COMPARE(referenceFile);
 	ret= ret && (referenceFile == other.referenceFile);
+	COMPARE(useCPU);
 	ret= ret && (useCPU == other.useCPU);
+	COMPARE(useGPU);
 	ret= ret && (useGPU == other.useGPU);
+	COMPARE(gpuPref);
 	ret= ret && (gpuPref == other.gpuPref);
 	return ret;
 }
