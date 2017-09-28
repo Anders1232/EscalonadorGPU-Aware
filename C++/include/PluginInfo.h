@@ -12,6 +12,7 @@ class PluginInfo: public Serializable<PluginInfo>
 	public:
 		std::string Serialize(void);
 		PluginInfo(std::string const &str);
+		bool operator==(PluginInfo const &other);
 		
 		std::string id;
 		std::string instanceName;

@@ -228,3 +228,82 @@ PluginInfo::PluginInfo(std::string const &str){
 	
 }
 
+bool PluginInfo::operator==(PluginInfo const &other){
+	bool ret= true;
+	
+	COMPARE(id);
+	ret= ret && (id==other.id);
+	
+	COMPARE(instanceName);
+	ret= ret && (instanceName==other.instanceName);
+	
+	COMPARE(privateCloud);
+	ret= ret && (privateCloud==other.privateCloud);
+	
+	COMPARE(host);
+	ret= ret && (host==other.host);
+	
+	COMPARE(upTime);
+	ret= ret && (upTime==other.upTime);
+	
+	COMPARE(latency);
+	ret= ret && (latency==other.latency);
+	
+	COMPARE(costPerGiga);
+	ret= ret && (costPerGiga==other.costPerGiga);
+	
+	COMPARE(timestamp);
+	ret= ret && (timestamp==other.timestamp);
+	
+	COMPARE(numCores);
+	ret= ret && (numCores==other.numCores);
+	
+	COMPARE(ranking);
+	ret= ret && (ranking==other.ranking);
+	
+	COMPARE(fsSize);
+	ret= ret && (fsSize==other.fsSize);
+	
+	COMPARE(memoryTotal);
+	ret= ret && (memoryTotal==other.memoryTotal);
+	
+	COMPARE(memoryFree);
+	ret= ret && (memoryFree==other.memoryFree);
+	
+	COMPARE(currentFrequencyCore);
+	ret= ret && (currentFrequencyCore==other.currentFrequencyCore);
+	
+	COMPARE(costPerHour);
+	ret= ret && (costPerHour==other.costPerHour);
+	
+	COMPARE(bandwith);
+	ret= ret && (bandwith==other.bandwith);
+	
+	COMPARE(ip);
+	ret= ret && (ip==other.ip);
+	
+	COMPARE(provider);
+	ret= ret && (provider==other.provider);
+	
+	COMPARE(gpuMemoryTotal);
+	ret= ret && (gpuMemoryTotal==other.gpuMemoryTotal);
+	
+	COMPARE(gpuMemoryMaxFrequency);
+	ret= ret && (gpuMemoryMaxFrequency==other.gpuMemoryMaxFrequency);
+	
+	COMPARE(gpuMemoryBus);
+	ret= ret && (gpuMemoryBus==other.gpuMemoryBus);
+	
+	COMPARE(gpuMemoryBandwith);
+	ret= ret && (gpuMemoryBandwith==other.gpuMemoryBandwith);
+	
+	COMPARE(gpuFloatingPointPerf);
+	ret= ret && (gpuFloatingPointPerf==other.gpuFloatingPointPerf);
+	
+	COMPARE(gpuMaxFrequency);
+	ret= ret && (gpuMaxFrequency==other.gpuMaxFrequency);
+	
+	return ret;
+}
+
+
