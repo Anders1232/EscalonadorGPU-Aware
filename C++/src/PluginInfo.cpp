@@ -18,69 +18,69 @@ std::string PluginInfo::Serialize(void){
 	ret+= '\n';
 	
 	ret+= "privateCloud=";
-	ret+= privateCloud;
+	ret+= std::to_string(privateCloud);
 	ret+= '\n';
 	
 	ret+= "host=";
 	ret+= host.adderss;
 	ret+= ':';
-	ret += host.port;
+	ret += std::to_string(host.port);
 	ret+= '\n';
 	
 	ret+= "upTime=";
-	ret+= upTime;
+	ret+= std::to_string(upTime);
 	ret+= '\n';
 	
 	ret+= "latency=";
-	ret+= latency;
+	ret+= std::to_string(latency);
 	ret+= '\n';
 	
 	ret+= "costPerGiga=";
-	ret+= costPerGiga;
+	ret+= std::to_string(costPerGiga);
 	ret+= '\n';
 	
 	ret+= "timestamp=";
-	ret+= timestamp;
+	ret+= std::to_string(timestamp);
 	ret+= '\n';
 	
 	ret+= "numCores=";
-	ret+= numCores;
+	ret+= std::to_string(numCores);
 	ret+= '\n';
 	
 	ret+= "numNodes=";
-	ret+= numNodes;
+	ret+= std::to_string(numNodes);
 	ret+= '\n';
 	
 	ret+= "numOccupied=";
-	ret+= numOccupied;
+	ret+= std::to_string(numOccupied);
 	ret+= '\n';
 	
 	ret+= "ranking=";
-	ret+= ranking;
+	ret+= std::to_string(ranking);
 	ret+= '\n';
 	
 	ret+= "fsSize=";
-	ret+= fsSize;
+	ret+= std::to_string(fsSize);
 	ret+= '\n';
 	
 	ret+= "memoryTotal=";
-	ret+= memoryTotal;
+	ret+= std::to_string(memoryTotal);
 	ret+= '\n';
 	
 	ret+= "memoryFree=";
-	ret+= memoryFree;
+	ret+= std::to_string(memoryFree);
 	ret+= '\n';
 	
 	ret+= "currentFrequencyCore=";
-	ret+= currentFrequencyCore;
+	ret+= std::to_string(currentFrequencyCore);
 	ret+= '\n';
 	
 	ret+= "costPerHour=";
-	ret+= costPerHour;
+	ret+= std::to_string(costPerHour);
 	ret+= '\n';
 	
 	ret+= "bandwith=";
-	ret+= bandwith;
+	ret+= std::to_string(bandwith);
 	ret+= '\n';
 	
 	ret+= "ip=";
@@ -93,27 +93,27 @@ std::string PluginInfo::Serialize(void){
 	
 	//adições para suporte de GPU
 	ret+= "gpuMemoryTotal=";
-	ret+= gpuMemoryTotal;
+	ret+= std::to_string(gpuMemoryTotal);
 	ret+= '\n';
 	
 	ret+= "gpuMemoryMaxFrequency=";
-	ret+= gpuMemoryMaxFrequency;
+	ret+= std::to_string(gpuMemoryMaxFrequency);
 	ret+= '\n';
 	
 	ret+= "gpuMemoryBus=";
-	ret+= gpuMemoryBus;
+	ret+= std::to_string(gpuMemoryBus);
 	ret+= '\n';
 	
 	ret+= "gpuMemoryBandwith=";
-	ret+= gpuMemoryBandwith;
+	ret+= std::to_string(gpuMemoryBandwith);
 	ret+= '\n';
 	
 	ret+= "gpuFloatingPointPerf=";
-	ret+= gpuFloatingPointPerf;
+	ret+= std::to_string(gpuFloatingPointPerf);
 	ret+= '\n';
 	
 	ret+= "gpuMaxFrequency=";
-	ret+= gpuMaxFrequency;
+	ret+= std::to_string(gpuMaxFrequency);
 	ret+= '\n';
 	
 	return ret;
@@ -142,86 +142,113 @@ PluginInfo::PluginInfo(std::string const &str){
 	buffer[TEMP_BUFFER_SIZE]= '\0';
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "id=%[^\n]", buffer) );
 	id= buffer;
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "instanceName=%[^\n]", buffer) );
 	instanceName= buffer;
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "privateCloud=%d", &privateCloud) );
 	
 	token= strtok(NULL, delimiter);
-	ASSERT(2 == sscanf(token, "instanceName=%[^:]:%d", buffer, &(host.port) ) );
+	REPORT_DEBUG("\ttoken= " << token << "\n");
+	ASSERT(2 == sscanf(token, "host=%[^:]:%d", buffer, &(host.port) ) );
 	host.adderss= buffer;
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "upTime=%ld", &upTime) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "latency=%lf", &latency) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "costPerGiga=%lf", &costPerGiga) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "timestamp=%ld", &timestamp) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "numCores=%d", &numCores) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "numNodes=%d", &numNodes) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "numOccupied=%d", &numOccupied) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "ranking=%lf", &ranking) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "fsSize=%f", &fsSize) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "memoryTotal=%lf", &memoryTotal) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "memoryFree=%lf", &memoryFree) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "currentFrequencyCore=%lf", &currentFrequencyCore) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "costPerHour=%lf", &costPerHour) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "bandwith=%lf", &bandwith) );
+	REPORT_DEBUG2(1, "\ttoken= " <<token<< "\tbandwith = "<< bandwith)
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "ip=%[^\n]", buffer) );
 	ip= buffer;
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "provider=%[^\n]", buffer) );
 	provider= buffer;
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "gpuMemoryTotal=%lf", &gpuMemoryTotal) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "gpuMemoryMaxFrequency=%lf", &gpuMemoryMaxFrequency) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "gpuMemoryBus=%lf", &gpuMemoryBus) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "gpuMemoryBandwith=%lf", &gpuMemoryBandwith) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "gpuFloatingPointPerf=%lf", &gpuFloatingPointPerf) );
 	
 	token= strtok(NULL, delimiter);
+	REPORT_DEBUG("\ttoken= " << token << "\n");
 	ASSERT(1 == sscanf(token, "gpuMaxFrequency=%lf", &gpuMaxFrequency) );
 	
 	operator delete[](temp);
@@ -240,7 +267,7 @@ bool PluginInfo::operator==(PluginInfo const &other){
 	COMPARE(privateCloud);
 	ret= ret && (privateCloud==other.privateCloud);
 	
-	COMPARE(host);
+	BASIC_COMPARE(host);
 	ret= ret && (host==other.host);
 	
 	COMPARE(upTime);
@@ -304,6 +331,41 @@ bool PluginInfo::operator==(PluginInfo const &other){
 	ret= ret && (gpuMaxFrequency==other.gpuMaxFrequency);
 	
 	return ret;
+}
+
+bool PluginInfo::TestSerialization(void){
+	PluginInfo a;
+	a.id= "idTeste";
+	a.instanceName= "testInstanceName";
+	a.privateCloud= 14;
+	a.host= Host("1.2.3.4", 31415);
+	a.upTime= 80040234823;
+	a.latency= 123.56456;
+	a.costPerGiga= 567.989;
+	a.timestamp= 123;
+	a.numCores= 2;
+	a.numNodes=3;
+	a.numOccupied=4;
+	a.ranking= 2234;
+	a.fsSize= 45456.234;
+	a.memoryTotal= 765.4;
+	a.memoryFree= 654.3;
+	a.currentFrequencyCore= 12345.6;
+	a.costPerHour=9.87;
+	a.bandwith= 9.76;
+	a.ip= "1.2.3.4";
+	a.provider= "eu.mesmo";
+	a.gpuMemoryTotal= 123.123;
+	a.gpuMemoryMaxFrequency= 234.234;
+	a.gpuMemoryBus= 345.345;
+	a.gpuMemoryBandwith= 456.456;
+	a.gpuFloatingPointPerf= 567.567;
+	a.gpuMaxFrequency= 678.678;
+	
+	std::string serializated= a.Serialize();
+	printf("\n------\n%s\n------\n", serializated.c_str());
+	PluginInfo b(serializated);
+	return a==b;
 }
 
 

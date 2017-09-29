@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "Job.h"
+#include "PluginInfo.h"
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -23,6 +24,9 @@ int main(void){
 
 	printf("Job Serialization Test:\t\t");
 	PrintResult(Job::TestSerialization());
+	
+	printf("PluginInfo Serialization Test:\t\t");
+	PrintResult(PluginInfo::TestSerialization());
 	
 	return 0;
 }
