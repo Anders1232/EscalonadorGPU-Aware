@@ -109,4 +109,22 @@ public class CppSched/* extends SchedPolicy*/
 		while(!received.startsWith(begin));
 		return received;
 	}
+	
+	public abstract HashMap<Job, PluginInfo> schedule(List<Job> jobs){
+		String message= "SCHEDULE\nJOBS=" + jobs.lenght;
+		message+= '\r';
+		for(int i=0; i < jobs.size(); i++){
+			message+= jobs[i].Serialize();
+			message+= '\r';
+		}
+		message+= "PLUGININFOS=" + 
+		for ((Map.Entry<K, V> entry : map.entrySet()){
+			message+="key="+entry.getKey();
+			message+= '\r';
+			message+="value="+entry.getValue().Serialize();
+			message+= '\r';
+		}
+		socket.send(new DatagramPacket((message).getBytes("US-ASCII"), (message).getBytes("US-ASCII").length, cppAddr));
+		Debug();
+	}
 }
