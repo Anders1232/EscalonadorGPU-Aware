@@ -1,6 +1,7 @@
 import java.net.DatagramSocket;
 import java.lang.String;
 import java.util.Random;
+import java.util.List;
 import java.net.DatagramPacket;
 import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -69,7 +70,7 @@ public class CppSched/* extends SchedPolicy*/
 			if(Receive("[SchedTypeAwnser]").contains("Fail"))
 			{
 				Debug();
-				throw(new String(Deu ruim));
+				throw(new String("Deu ruim"));
 			}
 			System.out.println("Escalonador gerado!");
 			
@@ -117,8 +118,9 @@ public class CppSched/* extends SchedPolicy*/
 			message+= jobs[i].Serialize();
 			message+= '\r';
 		}
-		message+= "PLUGININFOS=" + 
-		for ((Map.Entry<K, V> entry : map.entrySet()){
+		message+= "PLUGININFOS=" + cloudMap.entrySet().size();
+		message+= '\r';
+		for (Map.Entry<String, PluginInfo> entry : cloudMap.entrySet()) {
 			message+="key="+entry.getKey();
 			message+= '\r';
 			message+="value="+entry.getValue().Serialize();
