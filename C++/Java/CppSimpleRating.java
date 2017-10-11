@@ -1,4 +1,4 @@
-import BioNimbuZ.CppSched;
+//import BioNimbuZ.CppSched;
 
 public class CppSimpleRating extends CppSched{
 	protected  String GetSchedPolicy(){
