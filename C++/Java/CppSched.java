@@ -114,7 +114,7 @@ public class CppSched/* extends SchedPolicy*/
 	}
 	
 	public abstract HashMap<Job, PluginInfo> schedule(List<Job> jobs){
-		String message= "SCHEDULE\nJOBS=" + jobs.lenght;
+		String message= "SCHEDULE\rJOBS=" + jobs.lenght;
 		message+= '\r';
 		for(int i=0; i < jobs.size(); i++){
 			message+= jobs[i].Serialize();

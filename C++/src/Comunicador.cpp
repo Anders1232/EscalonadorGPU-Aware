@@ -1,9 +1,14 @@
 #include "Comunicador.hpp"
 
+#include <string>
+#include <vector>
 #include <net/if.h>
 #include <netdb.h>
 #include <string.h>
 #include <stdio.h>
+
+#include <thread>
+#include <pthread.h>
 
 #include "Error.h"
 #include "SimpleRatingSched.h"
@@ -106,5 +111,71 @@ void Comunicador::DefineSched(void){
 		}
 	}
 	while(!success);
+}
+
+class StringForPluginInfo{
+	public:
+		std::unordered_map<std::string, PluginInfo>* map;
+		pthread_mutex_t *mutex;
+		std::string strToProcess;
+		
+		StringForPluginInfo(
+				std::unordered_map<std::string, PluginInfo>* map,
+				pthread_mutex_t *mutex,
+				std::string strToProcess
+				):
+			map(map),
+			mutex(mutex),
+			strToProcess(strToProcess){}
+};
+
+class StringForJob{
+	public:
+		std::vector<Job>* jobs;
+		pthread_mutex_t *mutex;
+		std::string strToProcess;
+		StringForJob(
+				std::vector<Job>* jobs,
+				pthread_mutex_t *mutex,
+				std::string strToProcess
+				):
+			jobs(jobs),
+			mutex(mutex),
+			strToProcess(strToProcess){}
+};
+
+void* CreateJob(void*)
+
+void Comunicador::Schedule(void){
+	int size= BUFFER_SIZE;
+/*	char *temp= (char*)operator new[] (size+1);
+	memcpy(temp, str.c_str(), size);
+	temp[size]= '\0';
+*/	
+	char delimiter[2];
+	delimiter[0]= '\r';
+	delimiter[1]= '\0';
+	char *token;
+	ASSERT(0 == memcmp("SCHEDULE" , token= strtok(buffer, delimiter), STRLEN("SCHEDULE") ) );
+//	buffer[TEMP_BUFFER_SIZE]= '\0';
+	
+	std::vector<std::string> jobList;
+	int vecSize;
+	token= strtok(NULL, delimiter);
+	ASSERT(1 == sscanf(token, "JOBS=%d", &vecSize) );
+	jobList.reserve(vecsize);
+	REPORT_DEBUG("token= " << token << "\n");
+	for(int i=0; i < vecSize; i++){
+		token= strtok(NULL, delimiter);
+		REPORT_DEBUG("token= " << token << "\n");
+		ASSERT(1 == sscanf(token, "%[^\n]", buffer) );
+		jobList.emplace_back(token);
+	}
+	
+	pthread_t *threads= operator new[] (jobList.size());
+	for(int i=0; i< vecSize. i++){
+		
+		pthread_create()
+	}
 }
 

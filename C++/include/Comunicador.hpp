@@ -30,7 +30,7 @@ class Comunicador
 		std::string Receive(std::string begin);
 		Escalonador *sched;
 		void DefineSched(void);
-		
+		void Schedule(void);
 };
 
 #endif
