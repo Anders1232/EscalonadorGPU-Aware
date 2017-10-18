@@ -117,17 +117,32 @@ class StringForPluginInfo{
 	public:
 		std::unordered_map<std::string, PluginInfo>* map;
 		pthread_mutex_t *mutex;
+		std::string key;
 		std::string strToProcess;
 		
 		StringForPluginInfo(
 				std::unordered_map<std::string, PluginInfo>* map,
 				pthread_mutex_t *mutex,
+				std::string key,
 				std::string strToProcess
 				):
 			map(map),
 			mutex(mutex),
+			key(key),
 			strToProcess(strToProcess){}
 };
+
+void* CreatePluginInfo(void* args_)
+{
+	StringForPluginInfo *args;
+	args= (StringForPluginInfo*)args_;
+	PluginInfo pluginInfo(args->strToProcess.c_str());
+	pthread_mutex_lock(args->mutex);
+	(*(args->map) )[args->key]= pluginInfo;
+	pthread_mutex_unlock(args->mutex);
+	delete(args);
+	return NULL;
+}
 
 class StringForJob{
 	public:
@@ -144,7 +159,17 @@ class StringForJob{
 			strToProcess(strToProcess){}
 };
 
-void* CreateJob(void*)
+void* CreateJob(void* args_)
+{
+	StringForJob *args;
+	args= (StringForJob*)args_;
+	Job job(args->strToProcess.c_str());
+	pthread_mutex_lock(args->mutex);
+	args->jobs->push_back(job);
+	pthread_mutex_unlock(args->mutex);
+	delete(args);
+	return NULL;
+}
 
 void Comunicador::Schedule(void){
 	int size= BUFFER_SIZE;
@@ -163,19 +188,57 @@ void Comunicador::Schedule(void){
 	int vecSize;
 	token= strtok(NULL, delimiter);
 	ASSERT(1 == sscanf(token, "JOBS=%d", &vecSize) );
-	jobList.reserve(vecsize);
+	jobList.reserve(vecSize);
 	REPORT_DEBUG("token= " << token << "\n");
 	for(int i=0; i < vecSize; i++){
 		token= strtok(NULL, delimiter);
 		REPORT_DEBUG("token= " << token << "\n");
-		ASSERT(1 == sscanf(token, "%[^\n]", buffer) );
+		ASSERT(1 == sscanf(token, "%[^\r\n]", buffer) );
 		jobList.emplace_back(token);
 	}
 	
-	pthread_t *threads= operator new[] (jobList.size());
-	for(int i=0; i< vecSize. i++){
-		
-		pthread_create()
+	pthread_t *threads= (pthread_t*) operator new[] (jobList.size()*sizeof(pthread_t));
+	pthread_mutex_t mutex;
+	pthread_mutex_init(&mutex, NULL);
+	std::vector<Job> jobs;
+	jobs.reserve(vecSize);
+	for(int i=0; i< vecSize; i++)
+	{
+		pthread_create(&(threads[i]), NULL, CreateJob, (void*)new StringForJob(&jobs, &mutex, jobList[i]));
 	}
+	for(int i=0; i< vecSize; i++)
+	{
+		pthread_join(threads[i], NULL );
+	}
+	delete[] (threads);
+	
+	ASSERT(1 == sscanf(token, "PLUGININFOS=%d", &vecSize) );
+	std::vector<std::string> pluginStrings;
+	pluginStrings.reserve(vecSize);
+	std::vector<std::string> keyStrings;
+	keyStrings.reserve(vecSize);
+	std::unordered_map<std::string, PluginInfo> pluginInfos;
+	pluginInfos.reserve(vecSize);
+	
+	for(int i=0; i < vecSize; i++){
+		token= strtok(NULL, delimiter);
+		REPORT_DEBUG("token= " << token << "\n");
+		ASSERT(1 == sscanf(token, "%[^\r\n]", buffer) );
+		keyStrings.emplace_back(token);
+		
+		token= strtok(NULL, delimiter);
+		REPORT_DEBUG("token= " << token << "\n");
+		ASSERT(1 == sscanf(token, "%[^\r\n]", buffer) );
+		pluginStrings.emplace_back(token);
+	}
+	
+	threads= (pthread_t*) operator new[] (pluginStrings.size()* sizeof(pthread_t));
+	for(int i=0; i< vecSize; i++)
+	{
+		pthread_create(&(threads[i]), NULL, CreatePluginInfo, (void*)new StringForPluginInfo(&pluginInfos, &mutex, keyStrings[i], pluginStrings[i]));
+	}
+	pthread_mutex_destroy(&mutex);
+	delete[] (threads);
+	
 }
 
