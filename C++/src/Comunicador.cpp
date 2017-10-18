@@ -240,5 +240,16 @@ void Comunicador::Schedule(void){
 	pthread_mutex_destroy(&mutex);
 	delete[] (threads);
 	
+	std::vector<ScheduleResult> results= sched->Schedule(jobs, pluginInfos);
+	
+	std::string message= "Results=";
+	message= message+ std::to_string(results.size());
+	message= message+= '\r';
+	for(unsigned int i=0; i < results.size(); i++)
+	{
+		message= message + results[i].Serialize();
+		message= message + '\r';
+	}
+	
 }
 
