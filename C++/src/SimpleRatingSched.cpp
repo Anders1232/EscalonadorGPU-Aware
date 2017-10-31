@@ -3,12 +3,17 @@
 
 
 bool JobComparer(Job const &a, Job const &b){
-	return a.worstExecution < b.worstExecution;
+	return a.worstExecution > b.worstExecution;
 }
 
 bool PluginInfoComparer(PluginInfo const &a, PluginInfo const &b){
-	return a.ranking < b.ranking;
+	return a.ranking > b.ranking;
 }
+
+bool PluginInfoComparerByGPU(PluginInfo const &a, PluginInfo const &b){
+	return a.gpuFloatingPointPerf > b.gpuFloatingPointPerf;
+}
+
 
 std::vector<ScheduleResult> SimpleRatingSched::Schedule(std::vector<Job> const &jobs, std::unordered_map<std::string, PluginInfo> const &cloudMap){
 	std::vector<Job> sortedJobs(jobs.begin(), jobs.end());
@@ -19,6 +24,41 @@ std::vector<ScheduleResult> SimpleRatingSched::Schedule(std::vector<Job> const &
 		machines.push_back(it->second);
 	}
 	std::sort(machines.begin(), machines.end(), PluginInfoComparer);
+	
+	std::vector<PluginInfo>GPUs= machines;
+	std::sort(machines.begin(), machines.end(), PluginInfoComparerByGPU);
+	//TODO: otimizar: inverter ordemd e busca
+	for(auto i= GPUs.begin(); i != GPUs.end(); i++){
+		if(0 == (*i).gpuFloatingPointPerf){
+			GPUs.erase(i, GPUs.end());
+			break;
+		}
+	}
+	
+	std::vector<ScheduleResult> result;
+	
+	while(! (jobs.empty() || (jobs[0].useGPU && GPUs.empty() && machines.empty() ) ||
+			 !jobs[0].useGPU && machines.empty()) ){
+		Job &aux= job[0];
+		bool onGPU=false;
+		if(aux.useGPU){
+			if(aux.worstExecution*aux.gpuPref < aux.worstExecution){
+				onGPU=true;
+				//escalonar na GPU
+				result.emplace_back(aux.id, GPUs[0].id, 0x2);
+				GPUs.erase(GPUs.begin());
+				jobs.erase(jobs.begin());
+			}
+		}
+		if(!onGPU){
+			//escalonar na CPU
+			result.emplace_back(aux.id, machines[0].id, 0x1);
+			machines.erase(machines.begin());
+			jobs.erase(jobs.begin());
+		}
+	}
+	return result;
+	
 	
 }
 
