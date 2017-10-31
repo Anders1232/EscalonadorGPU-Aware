@@ -41,7 +41,6 @@ public class CppSched/* extends SchedPolicy*/
 			long key= randomGenerator.nextLong();
 			System.out.println("Porta escolhida: " + GetPort());
 			System.out.println("Número sorteado: " + key);
-//			System
 			Debug();
 			Runtime r = Runtime.getRuntime();
 			Process p = r.exec("./Escalonador.out "+ GetPort() + " " + key + " > /home/francisco/Escalonador.log 2>&1 &");//my_command > output.log 2>&1 &
@@ -130,5 +129,25 @@ public class CppSched/* extends SchedPolicy*/
 		}
 		socket.send(new DatagramPacket((message).getBytes("US-ASCII"), (message).getBytes("US-ASCII").length, cppAddr));
 		Debug();
+		String result= Receive("Results=");
+		StringTokenizer tokenizer= new StringTokenizer(result, '\r', false);
+		int resultSize= Integer.parseInt(tokenizer.nextToken().substring("Results=".lenght);
+		for(int i=0; i < resultSize; i++){
+			String token= tokenizer.nextToken();
+			StringTokenizer localTokenizer= new StringTokenizer(token, '\n', false);
+			
+		}
+		
+		HashMap<Job, PluginInfo> result= new HashMap<Job, PluginInfo>();
+		
+		
 	}
+	protected Job FindJob(String jobId, List<Job> jobs){
+		for(int i=0; i < jobs.lenght; i++){
+			if(jobs[i].id == jobId){
+				return jobId;
+			}
+		}
+	}
+
 }

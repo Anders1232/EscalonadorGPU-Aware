@@ -88,6 +88,14 @@ std::string Comunicador::Receive(std::string begin)
 			std::cout<< "Received invalid message, ignoring it. Message: "<< buffer;
 		}
 		else{
+			int size= BUFFER_SIZE;
+			char delimiter[2];
+			delimiter[0]= '\r';
+			delimiter[1]= '\0';
+			char *token;
+			if(0 == memcmp("SCHEDULE" , token= strtok(buffer, delimiter), STRLEN("SCHEDULE") ) ){
+				Schedule();
+			}
 			break;
 		}
 	}
@@ -173,15 +181,11 @@ void* CreateJob(void* args_)
 
 void Comunicador::Schedule(void){
 	int size= BUFFER_SIZE;
-/*	char *temp= (char*)operator new[] (size+1);
-	memcpy(temp, str.c_str(), size);
-	temp[size]= '\0';
-*/	
 	char delimiter[2];
 	delimiter[0]= '\r';
 	delimiter[1]= '\0';
 	char *token;
-	ASSERT(0 == memcmp("SCHEDULE" , token= strtok(buffer, delimiter), STRLEN("SCHEDULE") ) );
+//	ASSERT(0 == memcmp("SCHEDULE" , token= strtok(buffer, delimiter), STRLEN("SCHEDULE") ) );
 //	buffer[TEMP_BUFFER_SIZE]= '\0';
 	
 	std::vector<std::string> jobList;
